@@ -1,9 +1,22 @@
-<?php
-include 'config.php';
 
-$posts = $conn->query("SELECT * FROM posts ORDER BY timestamp DESC");
 
-$conn->close();
+    <?php
+session_start();
+
+// Process form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $content = isset($_POST['content']) ? trim($_POST['content']) : '';
+
+    if (!empty($content)) {
+        $timestamp = time();
+        $newPost = ['content' => $content, 'timestamp' => $timestamp];
+
+        $_SESSION['posts'][] = $newPost;
+    }
+}
+
+// Display posts
+$posts = isset($_SESSION['posts']) ? $_SESSION['posts'] : [];
 ?>
 
 <!DOCTYPE html>
@@ -92,7 +105,7 @@ header {
         </header>
 
         <section class="post-section">
-            <form action="post.php" method="post" class="post-form">
+            <form action="" method="post" class="post-form">
                 <label for="post-content">What's on your mind?</label>
                 <textarea id="post-content" name="content" required></textarea>
                 <br>
@@ -103,11 +116,11 @@ header {
         <section class="posts-section">
             <h2>Recent Posts:</h2>
             <?php
-            if ($posts->num_rows > 0) {
-                while ($row = $posts->fetch_assoc()) {
+            if (!empty($posts)) {
+                foreach ($posts as $post) {
                     echo "<div class='post'>";
-                    echo "<p>{$row['content']}</p>";
-                    echo "<span class='timestamp'>" . date('Y-m-d H:i:s', strtotime($row['timestamp'])) . "</span>";
+                    echo "<p>{$post['content']}</p>";
+                    echo "<span class='timestamp'>" . date('Y-m-d H:i:s', $post['timestamp']) . "</span>";
                     echo "</div>";
                 }
             } else {
@@ -118,3 +131,4 @@ header {
     </div>
 </body>
 </html>
+
