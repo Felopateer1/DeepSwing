@@ -1,3 +1,11 @@
+<?php
+include 'config.php';
+
+$posts = $conn->query("SELECT * FROM posts ORDER BY timestamp DESC");
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,13 +88,13 @@ header {
 <body>
     <div class="container">
         <header>
-            <h1>Welcome to DeepSwing Social App</h1>
+            <h1>Welcome to the Simple Social Network</h1>
         </header>
 
         <section class="post-section">
             <form action="post.php" method="post" class="post-form">
                 <label for="post-content">What's on your mind?</label>
-                <input id="post-content" style="padding:15px;font-size:1.6em;" name="content" required></input>
+                <textarea id="post-content" name="content" required></textarea>
                 <br>
                 <button type="submit">Post</button>
             </form>
@@ -95,14 +103,11 @@ header {
         <section class="posts-section">
             <h2>Recent Posts:</h2>
             <?php
-            $posts = file("https://github.com/Felopateer1/DeepSwing/blob/main/api/posts.json", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-            if ($posts) {
-                foreach ($posts as $post) {
-                    $data = json_decode($post, true);
+            if ($posts->num_rows > 0) {
+                while ($row = $posts->fetch_assoc()) {
                     echo "<div class='post'>";
-                    echo "<h3>{$data['content']}</h3>";
-                    echo "<span class='timestamp'>" . date('Y-m-d H:i:s', $data['timestamp']) . "</span>";
+                    echo "<p>{$row['content']}</p>";
+                    echo "<span class='timestamp'>" . date('Y-m-d H:i:s', strtotime($row['timestamp'])) . "</span>";
                     echo "</div>";
                 }
             } else {

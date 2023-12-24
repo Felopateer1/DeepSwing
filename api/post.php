@@ -1,26 +1,22 @@
 <?php
+include 'config.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $content = $_POST["content"];
 
-    $post = json_encode(["content" => $content, "timestamp" => time()]);
+    $stmt = $conn->prepare("INSERT INTO posts (content) VALUES (?)");
+    $stmt->bind_param("s", $content);
 
-    // Append the post to a file or use a separate file for posts
-    file_put_contents("https://github.com/Felopateer1/DeepSwing/blob/main/api/posts.json", $post . PHP_EOL, FILE_APPEND);
+    if ($stmt->execute()) {
+        echo "Post created";
+    } else {
+        echo "Error creating post: " . $stmt->error;
+    }
 
-    echo "Post created";
+    $stmt->close();
 } else {
     echo "Invalid request";
 }
+
+$conn->close();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-<meta http-equiv="refresh" content="1; url=index.php">
-</head>
-<body>
-    
-</body>
-</html>
