@@ -95,7 +95,7 @@ header {
         <section class="posts-section">
             <h2>Recent Posts:</h2>
             <?php
-            $posts = file("posts.json", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $posts = file("https://github.com/Felopateer1/DeepSwing/blob/main/api/posts.json", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
             if ($posts) {
                 foreach ($posts as $post) {
