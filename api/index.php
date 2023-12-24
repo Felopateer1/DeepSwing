@@ -1,22 +1,20 @@
-
-
-    <?php
+<?php
 session_start();
 
-// Process form submission
+// Process form submission (for chat)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $content = isset($_POST['content']) ? trim($_POST['content']) : '';
+    $message = isset($_POST['message']) ? trim($_POST['message']) : '';
 
-    if (!empty($content)) {
+    if (!empty($message)) {
         $timestamp = time();
-        $newPost = ['content' => $content, 'timestamp' => $timestamp];
+        $newMessage = ['user' => 'User', 'message' => $message, 'timestamp' => $timestamp];
 
-        $_SESSION['posts'][] = $newPost;
+        $_SESSION['chat'][] = $newMessage;
     }
 }
 
-// Display posts
-$posts = isset($_SESSION['posts']) ? $_SESSION['posts'] : [];
+// Display chat messages
+$chat = isset($_SESSION['chat']) ? $_SESSION['chat'] : [];
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +23,7 @@ $posts = isset($_SESSION['posts']) ? $_SESSION['posts'] : [];
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Social Network</title>
+    <title>Simple Chat</title>
     <style>
         body {
     font-family: Arial, sans-serif;
@@ -47,26 +45,32 @@ header {
     margin-bottom: 20px;
 }
 
-.post-section {
+.chat-section {
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
     margin-bottom: 20px;
 }
 
-.post-form {
+.message-section {
+    margin-bottom: 20px;
+}
+
+.message-form {
     display: flex;
     flex-direction: column;
 }
 
-.post-form label {
+.message-form label {
     font-weight: bold;
     margin-bottom: 5px;
 }
 
-.post-form textarea {
+.message-form textarea {
     resize: vertical;
     margin-bottom: 10px;
 }
 
-.post-form button {
+.message-form button {
     background-color: #1877f2;
     color: #fff;
     border: none;
@@ -74,16 +78,11 @@ header {
     cursor: pointer;
 }
 
-.post-form button:hover {
+.message-form button:hover {
     background-color: #1652a2;
 }
 
-.posts-section {
-    border-top: 1px solid #ddd;
-    padding-top: 20px;
-}
-
-.post {
+.message {
     background-color: #fff;
     border: 1px solid #ddd;
     padding: 10px;
@@ -101,34 +100,32 @@ header {
 <body>
     <div class="container">
         <header>
-            <h1>Welcome to the Simple Social Network</h1>
+            <h1>Simple Chat</h1>
         </header>
 
-        <section class="post-section">
-            <form action="" method="post" class="post-form">
-                <label for="post-content">What's on your mind?</label>
-                <textarea id="post-content" name="content" required></textarea>
-                <br>
-                <button type="submit">Post</button>
-            </form>
-        </section>
-
-        <section class="posts-section">
-            <h2>Recent Posts:</h2>
+        <section class="chat-section">
             <?php
-            if (!empty($posts)) {
-                foreach ($posts as $post) {
-                    echo "<div class='post'>";
-                    echo "<p>{$post['content']}</p>";
-                    echo "<span class='timestamp'>" . date('Y-m-d H:i:s', $post['timestamp']) . "</span>";
+            if (!empty($chat)) {
+                foreach ($chat as $message) {
+                    echo "<div class='message'>";
+                    echo "<p><strong>{$message['user']}:</strong> {$message['message']}</p>";
+                    echo "<span class='timestamp'>" . date('Y-m-d H:i:s', $message['timestamp']) . "</span>";
                     echo "</div>";
                 }
             } else {
-                echo "<p>No posts yet.</p>";
+                echo "<p>No messages yet.</p>";
             }
             ?>
+        </section>
+
+        <section class="message-section">
+            <form action="" method="post" class="message-form">
+                <label for="message-content">Type your message:</label>
+                <textarea id="message-content" name="message" required></textarea>
+                <br>
+                <button type="submit">Send</button>
+            </form>
         </section>
     </div>
 </body>
 </html>
-
